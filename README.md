@@ -56,4 +56,4 @@ Arduino → Java: ALARM:1
 
 ## Documentation
 
-[GitHub Pages report](https://YOUR-GITHUB-USERNAME.github.io/temperature-monitor-java-arduino/) — placeholder URL; report coming soon.
+[GitHub Pages report](https://eshgin10.github.io/temperature-monitor-java-arduino/) — Report coming soon.
