@@ -2,7 +2,7 @@
 
 Java Swing GUI + Arduino via USB Serial
 
-A Java Swing desktop app will display temperature and humidity in real time, let the user set a temperature limit, and control an LED with ON, OFF, or AUTO mode; AUTO turns the LED on above the limit.
+A Java Swing desktop app displays temperature and humidity in real time, lets the user set a temperature limit, and controls an LED with ON, OFF, or AUTO mode; AUTO turns the LED on above the limit.
 
 **Author:** Eshgin Shikhmammadov  
 **Course:** Course projects 2: Java (RNU)
@@ -21,7 +21,16 @@ Arduino UNO R3, DHT11 sensor (DHT22 in the Wokwi simulation), LED + resistor (or
 ```text
 temperature-monitor-java-arduino/
 ├── arduino/temperature_monitor.ino
-├── java-app/README.md
+├── java-app/
+│   ├── pom.xml
+│   ├── README.md
+│   └── src/
+│       ├── main/java/lv/rnu/tempmonitor/
+│       │   ├── Main.java
+│       │   ├── MainWindow.java
+│       │   ├── SerialConnection.java
+│       │   └── Protocol.java
+│       └── test/java/lv/rnu/tempmonitor/ProtocolTest.java
 ├── docs/index.html
 ├── assets/.gitkeep
 ├── .gitignore
@@ -32,7 +41,13 @@ temperature-monitor-java-arduino/
 
 1. Upload the sketch in `/arduino` using the Arduino IDE. Install the **DHT sensor library** by Adafruit. For the real DHT11 board, change `DHT22` to `DHT11` in the DHT constructor.
 2. Connect the Arduino by USB.
-3. Run the Java app and select the COM port — **coming soon**.
+3. Close the Arduino Serial Monitor. Build and run the Java app (Java 17 + Maven):
+   ```bash
+   cd java-app
+   mvn package
+   java -jar target/temperature-monitor.jar
+   ```
+   Pick the Arduino's COM port, press **Connect**, and wait for `STATUS:READY`. More details and troubleshooting: [`java-app/README.md`](java-app/README.md).
 
 ## Serial protocol
 

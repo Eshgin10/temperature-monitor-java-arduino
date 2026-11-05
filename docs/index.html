@@ -313,38 +313,64 @@ DHT dht(DHT_PIN, DHT11);   // real lab board</code></pre>
   <!-- 7. Java -->
   <section id="java">
     <h2><span class="n">6</span>Java Swing application</h2>
-    <p>The Java app is the user's control panel. It talks to the Arduino only through the text messages in the <a href="#communication">serial protocol</a>.</p>
+    <p>The Java app is the user's control panel. It is in <a href="https://github.com/Eshgin10/temperature-monitor-java-arduino/tree/main/java-app"><code>java-app/</code></a>. It uses Java 17, Swing for the window, and the <strong>jSerialComm</strong> library for the COM port. jSerialComm needs no extra driver or native install, because its native parts are inside the JAR.</p>
 
     <h3>Features</h3>
     <ul>
-      <li><strong>Connection:</strong> the user picks a COM port and connects. The app opens the port at 9600 baud.</li>
-      <li><strong>Live values:</strong> big labels show the latest temperature (°C) and humidity (%).</li>
-      <li><strong>Alarm indicator:</strong> shows if the temperature is above the limit.</li>
-      <li><strong>Temperature limit:</strong> a text field and a button. The app sends <code>LIMIT:&lt;value&gt;</code>.</li>
-      <li><strong>LED control:</strong> three buttons, ON, OFF and AUTO. They send <code>LED:ON</code>, <code>LED:OFF</code> and <code>LED:AUTO</code>.</li>
-      <li><strong>Message log:</strong> shows the lines that come in, so the user can see <code>ACK</code> and <code>ERR</code> answers.</li>
+      <li><strong>Connection row:</strong> a COM port dropdown, a <em>Refresh</em> button, and <em>Connect</em> / <em>Disconnect</em> buttons. The port opens at 9600 baud.</li>
+      <li><strong>Live values:</strong> large labels show the latest temperature (°C) and humidity (%).</li>
+      <li><strong>Alarm:</strong> <code>ALARM:1</code> shows a red "ALARM", and <code>ALARM:0</code> shows a green "OK".</li>
+      <li><strong>Temperature limit:</strong> a text field and a <em>Set limit</em> button. The app first checks that the text is a number from −40 to 80. If not, it shows an error message and sends nothing. If yes, it sends <code>LIMIT:&lt;value&gt;</code>.</li>
+      <li><strong>LED control:</strong> <em>LED ON</em>, <em>LED OFF</em> and <em>LED AUTO</em> send <code>LED:ON</code>, <code>LED:OFF</code> and <code>LED:AUTO</code>.</li>
+      <li><strong>Arduino state:</strong> a line shows the limit and LED mode the Arduino confirmed with <code>ACK</code>.</li>
+      <li><strong>Log:</strong> every line sent and received, with time and direction, for example <code>-&gt; LED:AUTO</code> and <code>&lt;- TEMP:29.2</code>. <code>ACK</code> and <code>ERR</code> lines are included.</li>
+      <li><strong>Status bar:</strong> <em>Disconnected</em> → <em>Connected to COMx — waiting for Arduino</em> → <em>Arduino ready on COMx</em> (after <code>STATUS:READY</code>).</li>
+      <li><strong>Errors:</strong> port not found, port busy, and cable unplugged during use each show a clear message. The app does not crash.</li>
     </ul>
 
-    <h3>How the app handles each message</h3>
-    <p>The app reads the serial data one line at a time. It splits each line at the first <code>:</code> into a name and a value. Then it reacts to the name:</p>
+    <h3>The classes</h3>
+    <p>The code is in the package <code>lv.rnu.tempmonitor</code>. It has four small classes:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Class</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>Main</code></td><td>Starts the program. Creates the window on the Swing thread.</td></tr>
+          <tr><td><code>MainWindow</code></td><td>The Swing window (a <code>JFrame</code>): buttons, labels, log and status bar. It reacts to every message from the Arduino.</td></tr>
+          <tr><td><code>SerialConnection</code></td><td>Opens and closes the COM port with jSerialComm, sends a line, and reads lines in a background thread. It tells a <code>Listener</code> (the window) about each new line or a lost connection.</td></tr>
+          <tr><td><code>Protocol</code></td><td>The protocol in one place: baud rate, the LED commands, <code>parse()</code> to split a line into name and value, and <code>limitCommand()</code> to check the limit and build <code>LIMIT:&lt;value&gt;</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>A small unit test (<code>ProtocolTest</code>) checks the parsing of every Arduino message and the limit check.</p>
+
+    <h3>How incoming lines are read</h3>
+    <ol>
+      <li><strong>Connect:</strong> <code>SerialConnection.connect()</code> checks that the port exists, sets 9600 baud, 8 data bits, 1 stop bit and no parity, then opens it. If it cannot open the port (for example the Serial Monitor uses it), it throws an error with a clear message.</li>
+      <li><strong>Background thread:</strong> a reader thread runs a loop. It asks the port how many bytes are waiting, reads them, and adds the characters to a line. It ignores <code>\r</code>. At <code>\n</code> the line is complete and goes to the listener.</li>
+      <li><strong>To the Swing thread:</strong> Swing components may only be changed on the Swing thread. So <code>MainWindow.onLineReceived()</code> does not touch the labels. It calls <code>SwingUtilities.invokeLater()</code>, and the line is handled on the Swing thread. The window never freezes.</li>
+      <li><strong>React:</strong> <code>Protocol.parse()</code> splits the line at the first <code>:</code>. So <code>ACK:LIMIT:28</code> becomes name <code>ACK</code> and value <code>LIMIT:28</code>. Then a <code>switch</code> on the name updates the window.</li>
+      <li><strong>Unplugged cable:</strong> if the port disappears, the reader thread sees it, closes the port and calls <code>onConnectionLost()</code>. The window shows "Disconnected (connection lost)" and a message.</li>
+    </ol>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Line from Arduino</th><th>What the app does</th></tr></thead>
         <tbody>
-          <tr><td><code>STATUS:READY</code></td><td>Shows that the Arduino is connected and ready.</td></tr>
-          <tr><td><code>TEMP:29.2</code></td><td>Updates the temperature label.</td></tr>
-          <tr><td><code>HUM:45</code></td><td>Updates the humidity label.</td></tr>
-          <tr><td><code>ALARM:1</code> / <code>ALARM:0</code></td><td>Turns the alarm indicator on or off.</td></tr>
-          <tr><td><code>ACK:...</code></td><td>Confirms in the log that the command worked.</td></tr>
-          <tr><td><code>ERR:...</code></td><td>Shows the error in the log.</td></tr>
+          <tr><td><code>STATUS:READY</code></td><td>Status bar: "Arduino ready on COMx". Shows the Arduino defaults: limit 30 °C, LED mode AUTO.</td></tr>
+          <tr><td><code>TEMP:29.2</code></td><td>Temperature label shows "29.2 °C".</td></tr>
+          <tr><td><code>HUM:45</code></td><td>Humidity label shows "45 %".</td></tr>
+          <tr><td><code>ALARM:1</code> / <code>ALARM:0</code></td><td>Red "ALARM" / green "OK".</td></tr>
+          <tr><td><code>ACK:LIMIT:28</code>, <code>ACK:LED:ON</code></td><td>Updates the "Limit on Arduino" / "LED mode" line.</td></tr>
+          <tr><td><code>ERR:SENSOR</code></td><td>Temperature and humidity show "--", so no old value stays on screen.</td></tr>
+          <tr><td>every line</td><td>Added to the log with <code>&lt;-</code>.</td></tr>
         </tbody>
       </table>
     </div>
-    <p>Serial data arrives in the background. Swing labels must be changed on the Swing UI thread, so updates should go through <code>SwingUtilities.invokeLater()</code>. This keeps the window responsive.</p>
+    <p><strong>Sending</strong> is short: <code>SerialConnection.send()</code> adds <code>\n</code> to the command and writes the bytes. Then the window adds it to the log with <code>-&gt;</code>.</p>
+    <p><strong>Why "waiting for Arduino"?</strong> Opening the COM port restarts the Arduino UNO. The app waits for <code>STATUS:READY</code> (about 2 seconds) before it says the Arduino is ready.</p>
 
     <h3>How it looks</h3>
     <div class="desc-box">
-      <p>One window with three parts. At the top is the connection row: COM port list and Connect button. In the middle are the live temperature and humidity values and the alarm indicator. At the bottom are the limit field and the ON / OFF / AUTO buttons, with the message log below them.</p>
+      <p>One window, from top to bottom: the connection row (COM port, Refresh, Connect, Disconnect); three boxes with the big temperature, humidity and alarm values; a line with the limit and LED mode on the Arduino; the limit field with <em>Set limit</em> and the three LED buttons; the log; and the status bar at the bottom. The command buttons work only while connected.</p>
     </div>
   </section>
 
@@ -413,13 +439,19 @@ DHT dht(DHT_PIN, DHT11);   // real lab board</code></pre>
       <li>Click the DHT22 and move the temperature slider above or below the limit.</li>
     </ol>
     <h3>Java app</h3>
+    <p>You need <strong>Java 17</strong> (or newer) and <strong>Maven</strong>.</p>
     <ol>
+      <li>Build the app. This also runs the unit tests and creates one runnable JAR that includes jSerialComm:
+<pre><code>cd java-app
+mvn package</code></pre></li>
       <li>Close the Arduino Serial Monitor, so the COM port is free.</li>
-      <li>Start the Java app.</li>
-      <li>Choose the Arduino's COM port from the list and click Connect.</li>
-      <li>Wait for <code>STATUS:READY</code>. Live values then appear every 2 seconds.</li>
-      <li>Type a limit and send it. Then choose ON, OFF or AUTO for the LED.</li>
+      <li>Start the app:
+<pre><code>java -jar target/temperature-monitor.jar</code></pre></li>
+      <li>Press <em>Refresh</em> and choose the Arduino's COM port. It is the same port as in the Arduino IDE under <em>Tools → Port</em>, or in the Windows Device Manager under <em>Ports (COM &amp; LPT)</em>.</li>
+      <li>Press <em>Connect</em>. Wait until the status bar says <em>Arduino ready</em>. Live values then appear every 2 seconds.</li>
+      <li>Type a limit and press <em>Set limit</em>. Then choose LED ON, OFF or AUTO.</li>
     </ol>
+    <p>More help (busy port, wrong baud rate, Arduino not ready) is in <a href="https://github.com/Eshgin10/temperature-monitor-java-arduino/blob/main/java-app/README.md"><code>java-app/README.md</code></a>.</p>
   </section>
 
   <!-- 10. Testing -->
