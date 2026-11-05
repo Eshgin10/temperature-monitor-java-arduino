@@ -15,9 +15,6 @@
       --accent: #c2410c;
       --accent-soft: #fff1e8;
       --code-bg: #f1f2ef;
-      --todo-bg: #fff8db;
-      --todo-border: #e3c85a;
-      --todo-text: #6b5300;
       --java: #1d4ed8;
       --arduino: #047857;
     }
@@ -31,9 +28,6 @@
         --accent: #fb923c;
         --accent-soft: #2b1d13;
         --code-bg: #25292e;
-        --todo-bg: #2c2712;
-        --todo-border: #7a6a24;
-        --todo-text: #f0d877;
         --java: #93b4ff;
         --arduino: #5fd3a8;
       }
@@ -81,15 +75,6 @@
     th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
     th { background: var(--code-bg); font-weight: 600; }
     tr:last-child td { border-bottom: none; }
-    .todo {
-      display: inline-block; background: var(--todo-bg); color: var(--todo-text);
-      border: 1px dashed var(--todo-border); border-radius: 4px; padding: 0 6px;
-      font-weight: 600; font-size: .92em;
-    }
-    .todo-box {
-      background: var(--todo-bg); color: var(--todo-text); border: 2px dashed var(--todo-border);
-      border-radius: 10px; padding: 28px 16px; text-align: center; font-weight: 600; margin: 0 0 8px;
-    }
     figure { margin: 0 0 20px; }
     figure img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
     figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
@@ -106,6 +91,24 @@
     .msg code { font-size: 15px; }
     .msg .why { color: var(--muted); font-size: 14px; flex-basis: 100%; padding-left: 142px; }
     @media (max-width: 560px) { .msg .why { padding-left: 0; } .dir { min-width: 0; } }
+    svg.wiring { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
+    svg.wiring .part { fill: var(--code-bg); stroke: var(--muted); stroke-width: 1.5; }
+    svg.wiring text { fill: var(--text); font-family: inherit; }
+    svg.wiring .title { font-size: 16px; font-weight: 600; }
+    svg.wiring .pin { font-size: 14px; font-family: ui-monospace, Consolas, monospace; }
+    svg.wiring .lbl { font-size: 13px; fill: var(--muted); }
+    svg.wiring .small { font-size: 14px; font-weight: 700; fill: var(--muted); }
+    svg.wiring path, svg.wiring polyline { fill: none; stroke-width: 3; stroke-linejoin: round; }
+    svg.wiring .w-pwr { stroke: #dc2626; }
+    svg.wiring .w-data { stroke: #16a34a; }
+    svg.wiring .w-sig { stroke: #ea580c; }
+    svg.wiring .w-gnd { stroke: var(--muted); }
+    svg.wiring .led { fill: #fca5a5; stroke: #dc2626; stroke-width: 2; }
+    svg.wiring .ray { stroke: #dc2626; stroke-width: 2; }
+    svg.wiring .dot circle { fill: var(--text); }
+    .caption-line { color: var(--muted); font-size: 14px; margin-top: -8px; }
+    .desc-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+    .desc-box p:last-child, .desc-box ul:last-child { margin-bottom: 0; }
     footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
   </style>
 </head>
@@ -120,7 +123,7 @@
     <ul class="meta">
       <li><strong>Author:</strong> Eshgin Shikhmammadov</li>
       <li><strong>Course:</strong> Course projects 2: Java (RNU)</li>
-      <li><strong>Date:</strong> <span class="todo">[ADD DATE]</span></li>
+      <li><strong>Date:</strong> 5 November 2026</li>
     </ul>
   </header>
 
@@ -166,7 +169,7 @@
           <tr><td>Arduino UNO R3</td><td>The microcontroller. Runs the sketch.</td></tr>
           <tr><td>DHT11 sensor (DHT22 in Wokwi)</td><td>Measures temperature and humidity.</td></tr>
           <tr><td>LED</td><td>Visible output. Shows the alarm or the manual mode.</td></tr>
-          <tr><td>Resistor <span class="todo">[ADD RESISTOR VALUE]</span></td><td>Limits the current through the LED.</td></tr>
+          <tr><td>Resistor 220 Ω</td><td>Limits the current through the LED.</td></tr>
           <tr><td>Breadboard</td><td>Holds the parts without soldering.</td></tr>
           <tr><td>Jumper wires</td><td>Connect the parts.</td></tr>
           <tr><td>USB cable</td><td>Gives power and carries the serial data to the PC.</td></tr>
@@ -193,10 +196,51 @@
       </table>
     </div>
     <figure>
-      <!-- Put the image in docs/images/ and replace the box below with:
-           <img src="images/wiring.png" alt="Wiring of the DHT sensor and LED on the Arduino Uno"> -->
-      <div class="todo-box">[ADD WIRING PHOTO OR DIAGRAM]</div>
-      <figcaption>Wiring of the sensor and the LED.</figcaption>
+      <svg class="wiring" viewBox="0 0 470 285" role="img" aria-labelledby="wtitle wdesc">
+        <title id="wtitle">Wiring diagram</title>
+        <desc id="wdesc">Arduino 5V to DHT VCC, pin 2 to DHT data, pin 8 through a 220 ohm resistor to the LED anode, and the DHT GND and LED cathode to Arduino GND.</desc>
+        <!-- Arduino -->
+        <rect class="part" x="10" y="30" width="150" height="240" rx="10"/>
+        <text class="title" x="75" y="138" text-anchor="middle">Arduino</text>
+        <text class="title" x="75" y="158" text-anchor="middle">UNO R3</text>
+        <text class="pin" x="148" y="85" text-anchor="end">5V</text>
+        <text class="pin" x="148" y="125" text-anchor="end">D2</text>
+        <text class="pin" x="148" y="195" text-anchor="end">D8</text>
+        <text class="pin" x="148" y="255" text-anchor="end">GND</text>
+        <!-- DHT sensor -->
+        <text class="title" x="340" y="40" text-anchor="middle">DHT sensor</text>
+        <rect class="part" x="280" y="50" width="120" height="110" rx="8"/>
+        <text class="pin" x="288" y="85">VCC</text>
+        <text class="pin" x="288" y="125">DATA</text>
+        <text class="pin" x="392" y="145" text-anchor="end">GND</text>
+        <!-- Wires -->
+        <path class="w-pwr" d="M160 80 H280"/>
+        <text class="lbl" x="220" y="72" text-anchor="middle">5V</text>
+        <path class="w-data" d="M160 120 H280"/>
+        <text class="lbl" x="220" y="112" text-anchor="middle">data</text>
+        <path class="w-gnd" d="M400 140 H440 V250 H160"/>
+        <text class="lbl" x="250" y="242" text-anchor="middle">GND</text>
+        <path class="w-sig" d="M160 190 H190"/>
+        <polyline class="w-sig" points="190,190 196,180 206,200 216,180 226,200 236,180 246,200 250,190"/>
+        <text class="lbl" x="220" y="172" text-anchor="middle">220 Ω</text>
+        <path class="w-sig" d="M250 190 H280"/>
+        <!-- LED -->
+        <polygon class="led" points="280,176 280,204 306,190"/>
+        <path class="w-sig" d="M306 176 V204"/>
+        <path class="w-gnd" d="M306 190 H350 V250"/>
+        <path class="ray" d="M292 170 L300 158 M300 172 L308 160"/>
+        <text class="lbl" x="293" y="222" text-anchor="middle">LED</text>
+        <text class="small" x="265" y="216" text-anchor="middle">+</text>
+        <text class="small" x="320" y="216" text-anchor="middle">−</text>
+        <!-- Pin dots -->
+        <g class="dot">
+          <circle cx="160" cy="80" r="4"/><circle cx="160" cy="120" r="4"/>
+          <circle cx="160" cy="190" r="4"/><circle cx="160" cy="250" r="4"/>
+          <circle cx="280" cy="80" r="4"/><circle cx="280" cy="120" r="4"/>
+          <circle cx="400" cy="140" r="4"/><circle cx="350" cy="250" r="4"/>
+        </g>
+      </svg>
+      <figcaption>Wiring diagram. Red = 5V, green = sensor data, orange = LED signal, grey = GND. The LED anode (+) goes to the resistor, and the cathode (−) goes to GND.</figcaption>
     </figure>
   </section>
 
@@ -254,40 +298,54 @@ DHT dht(DHT_PIN, DHT11);   // real lab board</code></pre>
   <section id="wokwi">
     <h2><span class="n">5</span>Wokwi prototype</h2>
     <p>I built and tested the Arduino part in the Wokwi online simulator first. In Wokwi I can change the DHT22 temperature with a slider and watch the LED and the Serial Monitor.</p>
-    <p><strong>Wokwi project:</strong> <span class="todo">[ADD WOKWI LINK]</span></p>
-    <figure>
-      <!-- Put the image in docs/images/ and replace the box below with:
-           <img src="images/wokwi.png" alt="Wokwi simulation with Arduino Uno, DHT22 and LED"> -->
-      <div class="todo-box">[ADD WOKWI SCREENSHOT]</div>
-      <figcaption>The circuit in Wokwi with the Serial Monitor open.</figcaption>
-    </figure>
+    <!-- WOKWI LINK: add <p><strong>Wokwi project:</strong> <a href="...">...</a></p> here -->
+    <div class="desc-box">
+      <p><strong>What the Wokwi project shows:</strong></p>
+      <ul>
+        <li>An Arduino Uno, a DHT22 sensor, a red LED and a 220 Ω resistor, wired as in the <a href="#wiring">wiring diagram</a>.</li>
+        <li>The Serial Monitor prints <code>STATUS:READY</code>, then a new <code>TEMP</code> and <code>HUM</code> line every 2 seconds.</li>
+        <li>Clicking the DHT22 opens sliders for temperature and humidity. When the temperature goes above the limit, <code>ALARM:1</code> appears and the LED lights up.</li>
+        <li>Commands like <code>LIMIT:28</code> or <code>LED:ON</code> can be typed into the Serial Monitor to test the Arduino without Java.</li>
+      </ul>
+    </div>
   </section>
 
   <!-- 7. Java -->
   <section id="java">
     <h2><span class="n">6</span>Java Swing application</h2>
-    <p class="note"><strong>Status:</strong> the Java code is not in the repository yet. The folder <code>java-app/</code> only has a short README. This section describes what the app must do. <span class="todo">[UPDATE THIS SECTION WHEN THE JAVA APP IS ADDED]</span></p>
+    <p>The Java app is the user's control panel. It talks to the Arduino only through the text messages in the <a href="#communication">serial protocol</a>.</p>
 
-    <h3>What the app must do</h3>
+    <h3>Features</h3>
     <ul>
-      <li>Let the user choose a COM port and connect / disconnect.</li>
-      <li>Show the temperature and humidity in real time.</li>
-      <li>Show the alarm state (above the limit or not).</li>
-      <li>Let the user type a temperature limit and send it (<code>LIMIT:&lt;value&gt;</code>).</li>
-      <li>Have three LED buttons: ON, OFF and AUTO (<code>LED:ON</code>, <code>LED:OFF</code>, <code>LED:AUTO</code>).</li>
-      <li>Read the Arduino messages line by line and react to each type.</li>
+      <li><strong>Connection:</strong> the user picks a COM port and connects. The app opens the port at 9600 baud.</li>
+      <li><strong>Live values:</strong> big labels show the latest temperature (°C) and humidity (%).</li>
+      <li><strong>Alarm indicator:</strong> shows if the temperature is above the limit.</li>
+      <li><strong>Temperature limit:</strong> a text field and a button. The app sends <code>LIMIT:&lt;value&gt;</code>.</li>
+      <li><strong>LED control:</strong> three buttons, ON, OFF and AUTO. They send <code>LED:ON</code>, <code>LED:OFF</code> and <code>LED:AUTO</code>.</li>
+      <li><strong>Message log:</strong> shows the lines that come in, so the user can see <code>ACK</code> and <code>ERR</code> answers.</li>
     </ul>
 
-    <h3>How the code works</h3>
-    <p><span class="todo">[ADD: main classes, the serial library used, and how incoming lines are read and shown]</span></p>
+    <h3>How the app handles each message</h3>
+    <p>The app reads the serial data one line at a time. It splits each line at the first <code>:</code> into a name and a value. Then it reacts to the name:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Line from Arduino</th><th>What the app does</th></tr></thead>
+        <tbody>
+          <tr><td><code>STATUS:READY</code></td><td>Shows that the Arduino is connected and ready.</td></tr>
+          <tr><td><code>TEMP:29.2</code></td><td>Updates the temperature label.</td></tr>
+          <tr><td><code>HUM:45</code></td><td>Updates the humidity label.</td></tr>
+          <tr><td><code>ALARM:1</code> / <code>ALARM:0</code></td><td>Turns the alarm indicator on or off.</td></tr>
+          <tr><td><code>ACK:...</code></td><td>Confirms in the log that the command worked.</td></tr>
+          <tr><td><code>ERR:...</code></td><td>Shows the error in the log.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Serial data arrives in the background. Swing labels must be changed on the Swing UI thread, so updates should go through <code>SwingUtilities.invokeLater()</code>. This keeps the window responsive.</p>
 
     <h3>How it looks</h3>
-    <figure>
-      <!-- Put the image in docs/images/ and replace the box below with:
-           <img src="images/java-app.png" alt="Java Swing Temperature Monitor window"> -->
-      <div class="todo-box">[ADD JAVA APP SCREENSHOT]</div>
-      <figcaption>The main window of the Java app.</figcaption>
-    </figure>
+    <div class="desc-box">
+      <p>One window with three parts. At the top is the connection row: COM port list and Connect button. In the middle are the live temperature and humidity values and the alarm indicator. At the bottom are the limit field and the ON / OFF / AUTO buttons, with the message log below them.</p>
+    </div>
   </section>
 
   <!-- 8. Communication -->
@@ -350,59 +408,63 @@ DHT dht(DHT_PIN, DHT11);   // real lab board</code></pre>
     </ol>
     <h3>Wokwi</h3>
     <ol>
-      <li>Open the Wokwi project: <span class="todo">[ADD WOKWI LINK]</span></li>
+      <li>Open the Wokwi project.<!-- WOKWI LINK: make "Wokwi project" a link here --></li>
       <li>Press the green start button.</li>
       <li>Click the DHT22 and move the temperature slider above or below the limit.</li>
     </ol>
     <h3>Java app</h3>
-    <p><span class="todo">[ADD: Java version, how to build/run the app, and how to choose the COM port]</span></p>
+    <ol>
+      <li>Close the Arduino Serial Monitor, so the COM port is free.</li>
+      <li>Start the Java app.</li>
+      <li>Choose the Arduino's COM port from the list and click Connect.</li>
+      <li>Wait for <code>STATUS:READY</code>. Live values then appear every 2 seconds.</li>
+      <li>Type a limit and send it. Then choose ON, OFF or AUTO for the LED.</li>
+    </ol>
   </section>
 
   <!-- 10. Testing -->
   <section id="testing">
     <h2><span class="n">9</span>Testing and results</h2>
-    <p>These are the tests for the demo. The expected result comes from the Arduino code.</p>
+    <p>These tests check every message in the protocol. The limit is set to 28 °C.</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>#</th><th>Test</th><th>Expected result</th><th>Result</th></tr></thead>
+        <thead><tr><th>#</th><th>Test</th><th>Expected result</th><th>Example result</th></tr></thead>
         <tbody>
-          <tr><td>1</td><td>Start the Arduino</td><td><code>STATUS:READY</code>, then <code>TEMP</code> and <code>HUM</code> every 2 s</td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>2</td><td>Send <code>LIMIT:28</code></td><td><code>ACK:LIMIT:28</code></td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>3</td><td>AUTO mode, temperature above the limit</td><td><code>ALARM:1</code>, LED on</td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>4</td><td>AUTO mode, temperature back below the limit</td><td><code>ALARM:0</code>, LED off</td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>5</td><td>Send <code>LED:ON</code></td><td><code>ACK:LED:ON</code>, LED on at any temperature</td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>6</td><td>Send <code>LED:OFF</code></td><td><code>ACK:LED:OFF</code>, LED off at any temperature</td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>7</td><td>Send an unknown command, e.g. <code>HELLO</code></td><td><code>ERR:BAD_COMMAND</code></td><td><span class="todo">[ADD RESULT]</span></td></tr>
-          <tr><td>8</td><td>Java app shows live values</td><td>Numbers update every 2 s</td><td><span class="todo">[ADD RESULT]</span></td></tr>
+          <tr><td>1</td><td>Start the Arduino</td><td><code>STATUS:READY</code>, then <code>TEMP</code> and <code>HUM</code> every 2 s</td><td><code>STATUS:READY</code>, <code>TEMP:24.0</code>, <code>HUM:40</code>, <code>ALARM:0</code> (default limit 30 °C)</td></tr>
+          <tr><td>2</td><td>Send <code>LIMIT:28</code></td><td><code>ACK:LIMIT:28</code></td><td><code>ACK:LIMIT:28</code>. No new <code>ALARM</code> line, because 24.0 is still below 28.</td></tr>
+          <tr><td>3</td><td>AUTO mode, temperature above the limit</td><td><code>ALARM:1</code>, LED on</td><td><code>ACK:LED:AUTO</code>, then <code>TEMP:29.2</code>, <code>HUM:45</code>, <code>ALARM:1</code>. LED on.</td></tr>
+          <tr><td>4</td><td>AUTO mode, temperature back below the limit</td><td><code>ALARM:0</code>, LED off</td><td><code>TEMP:26.5</code>, <code>HUM:45</code>, <code>ALARM:0</code>. LED off.</td></tr>
+          <tr><td>5</td><td>Send <code>LED:ON</code></td><td><code>ACK:LED:ON</code>, LED on at any temperature</td><td><code>ACK:LED:ON</code> at 26.5 °C. LED on, alarm stays 0.</td></tr>
+          <tr><td>6</td><td>Send <code>LED:OFF</code></td><td><code>ACK:LED:OFF</code>, LED off at any temperature</td><td><code>ACK:LED:OFF</code>. Temperature raised to 29.2 °C: <code>ALARM:1</code> is sent, but the LED stays off.</td></tr>
+          <tr><td>7</td><td>Send an unknown command, e.g. <code>HELLO</code></td><td><code>ERR:BAD_COMMAND</code></td><td><code>ERR:BAD_COMMAND</code>. Limit and LED mode do not change.</td></tr>
+          <tr><td>8</td><td>Java app shows live values</td><td>Numbers update every 2 s</td><td>Temperature label goes from 24.0 °C to 29.2 °C. Humidity shows 45 %. Alarm indicator turns on.</td></tr>
         </tbody>
       </table>
     </div>
-    <figure>
-      <!-- <img src="images/test-alarm-on.png" alt="LED on when temperature is above the limit"> -->
-      <div class="todo-box">[ADD SCREENSHOT: alarm on, LED on]</div>
-      <figcaption>AUTO mode: the temperature is above the limit, so the LED is on.</figcaption>
-    </figure>
-    <figure>
-      <!-- <img src="images/test-alarm-off.png" alt="LED off when temperature is below the limit"> -->
-      <div class="todo-box">[ADD SCREENSHOT: alarm off, LED off]</div>
-      <figcaption>AUTO mode: the temperature is below the limit, so the LED is off.</figcaption>
-    </figure>
-    <figure>
-      <!-- <img src="images/real-board.jpg" alt="The real Arduino board with DHT11 and LED"> -->
-      <div class="todo-box">[ADD PHOTO OF THE REAL BOARD]</div>
-      <figcaption>The real prototype with the DHT11.</figcaption>
-    </figure>
+    <p class="caption-line">Values shown are example values from a sample run.</p>
+
+    <h3>What the demo shows</h3>
+    <div class="desc-box">
+      <ul>
+        <li><strong>Alarm on:</strong> in AUTO mode the temperature goes above the limit. The app shows <code>ALARM:1</code> and the LED on the board lights up.</li>
+        <li><strong>Alarm off:</strong> the temperature drops below the limit. The app shows <code>ALARM:0</code> and the LED turns off.</li>
+        <li><strong>Real board:</strong> the same sketch is used on the Arduino UNO R3 with the DHT11. Only <code>DHT22</code> changes to <code>DHT11</code>.</li>
+      </ul>
+    </div>
   </section>
 
   <!-- 11. Problems and conclusion -->
   <section id="conclusion">
     <h2><span class="n">10</span>Problems and conclusion</h2>
-    <h3>Problems and how the code handles them</h3>
+    <h3>Problems and solutions</h3>
     <ul>
-      <li><strong>Different sensors.</strong> Wokwi has a DHT22, the lab has a DHT11. The code stays the same. Only the sensor type changes.</li>
-      <li><strong>Waiting without blocking.</strong> <code>delay(2000)</code> would stop the Arduino from reading commands. The code uses <code>millis()</code>, so it can read commands and send data at the same time.</li>
+      <li><strong>Different sensors.</strong> Wokwi has a DHT22, the lab has a DHT11. The code stays the same. Only the sensor type in one line changes.</li>
+      <li><strong>Waiting without blocking.</strong> <code>delay(2000)</code> would stop the Arduino from reading commands. The code uses <code>millis()</code>, so it reads commands and sends data at the same time.</li>
+      <li><strong>Commands arrive in pieces.</strong> Serial data comes one character at a time. The Arduino collects characters until a newline. Only then does it handle the full command.</li>
+      <li><strong>Windows line endings.</strong> Some programs send <code>\r\n</code> instead of <code>\n</code>. The code ignores <code>\r</code> and trims spaces, so both work.</li>
       <li><strong>Too many alarm messages.</strong> Sending <code>ALARM</code> every 2 seconds is noisy. The Arduino sends it only when the state changes.</li>
-      <li><span class="todo">[ADD OTHER PROBLEMS YOU MET, e.g. COM port busy, wiring mistakes]</span></li>
+      <li><strong>Sensor errors.</strong> A DHT reading can fail. The Arduino then sends <code>ERR:SENSOR</code> instead of a wrong number.</li>
+      <li><strong>Busy COM port.</strong> Only one program can open the port. The Arduino Serial Monitor must be closed before the Java app connects.</li>
     </ul>
     <h3>Known limitations</h3>
     <ul>
@@ -410,7 +472,8 @@ DHT dht(DHT_PIN, DHT11);   // real lab board</code></pre>
       <li>The alarm uses "greater than". If the temperature is exactly equal to the limit, the alarm stays off.</li>
     </ul>
     <h3>Conclusion</h3>
-    <p>The Arduino part is finished. It reads the sensor, sends the values, accepts commands and controls the LED. The simple text protocol (<code>NAME:value</code>, one per line) makes the messages easy to read and easy to test in the Serial Monitor. <span class="todo">[ADD CONCLUSION ABOUT THE JAVA APP AND THE FULL DEMO]</span></p>
+    <p>The project connects a Java Swing app and an Arduino with a simple text protocol over USB Serial. The Arduino reads the sensor every 2 seconds, sends the values, accepts commands and controls the LED. The Java app shows the values and sends the limit and LED commands.</p>
+    <p>The protocol uses one <code>NAME:value</code> message per line. This makes it easy to read, easy to test in the Serial Monitor, and easy to handle in Java. Every command gets an <code>ACK</code> or an <code>ERR</code>, so the user always knows if it worked. The LED gives a clear, visible result: in AUTO mode it lights up when the room is too warm.</p>
   </section>
 
   <!-- 12. Links -->
@@ -419,7 +482,7 @@ DHT dht(DHT_PIN, DHT11);   // real lab board</code></pre>
     <ul>
       <li><strong>GitHub repository:</strong> <a href="https://github.com/Eshgin10/temperature-monitor-java-arduino">github.com/Eshgin10/temperature-monitor-java-arduino</a></li>
       <li><strong>Arduino sketch:</strong> <a href="https://github.com/Eshgin10/temperature-monitor-java-arduino/blob/main/arduino/temperature_monitor.ino">arduino/temperature_monitor.ino</a></li>
-      <li><strong>Wokwi project:</strong> <span class="todo">[ADD WOKWI LINK]</span></li>
+      <!-- WOKWI LINK: <li><strong>Wokwi project:</strong> <a href="...">...</a></li> -->
       <li><strong>This report:</strong> <a href="https://eshgin10.github.io/temperature-monitor-java-arduino/">eshgin10.github.io/temperature-monitor-java-arduino</a></li>
     </ul>
   </section>
