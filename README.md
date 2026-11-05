@@ -72,3 +72,5 @@ Arduino → Java: ALARM:1
 ## Documentation
 
 Project report: [eshgin10.github.io/temperature-monitor-java-arduino](https://eshgin10.github.io/temperature-monitor-java-arduino/) (GitHub Pages).
+
+Demo video of the real prototype: [`docs/media/demo.mp4`](docs/media/demo.mp4) (also embedded in the report).

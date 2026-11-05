@@ -109,6 +109,8 @@
     .caption-line { color: var(--muted); font-size: 14px; margin-top: -8px; }
     .desc-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
     .desc-box p:last-child, .desc-box ul:last-child { margin-bottom: 0; }
+    figure.video video { display: block; width: 100%; max-width: 360px; max-height: 70vh; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border); background: #000; }
+    figure.video figcaption { text-align: center; max-width: 520px; margin: 8px auto 0; }
     footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
   </style>
 </head>
@@ -483,6 +485,15 @@ mvn package</code></pre></li>
         <li><strong>Real board:</strong> the same sketch is used on the Arduino UNO R3 with the DHT11. Only <code>DHT22</code> changes to <code>DHT11</code>.</li>
       </ul>
     </div>
+
+    <h3>Demo video</h3>
+    <figure class="video">
+      <video controls preload="metadata" playsinline>
+        <source src="media/demo.mp4" type="video/mp4">
+        Your browser cannot play this video. <a href="media/demo.mp4">Download it here</a>.
+      </video>
+      <figcaption>The real prototype (90 s): the DHT sensor module, the LED module, and the Java app showing live temperature and humidity. This video was recorded with an earlier version of the Java app, so the window looks a little different from the current code.</figcaption>
+    </figure>
   </section>
 
   <!-- 11. Problems and conclusion -->
@@ -515,6 +526,7 @@ mvn package</code></pre></li>
       <li><strong>GitHub repository:</strong> <a href="https://github.com/Eshgin10/temperature-monitor-java-arduino">github.com/Eshgin10/temperature-monitor-java-arduino</a></li>
       <li><strong>Arduino sketch:</strong> <a href="https://github.com/Eshgin10/temperature-monitor-java-arduino/blob/main/arduino/temperature_monitor.ino">arduino/temperature_monitor.ino</a></li>
       <!-- WOKWI LINK: <li><strong>Wokwi project:</strong> <a href="...">...</a></li> -->
+      <li><strong>Demo video:</strong> <a href="media/demo.mp4">media/demo.mp4</a></li>
       <li><strong>This report:</strong> <a href="https://eshgin10.github.io/temperature-monitor-java-arduino/">eshgin10.github.io/temperature-monitor-java-arduino</a></li>
     </ul>
   </section>
